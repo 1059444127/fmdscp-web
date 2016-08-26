@@ -1,0 +1,94 @@
+extends layout
+
+block content
+  div.col-md-4
+    form.form-horizontal(name="search", method="post")
+      div.form-group
+        label.col-sm-3.control-label Name
+        div.col-sm-9
+          input.form-control(type="text", name="patientname", value=patientname)
+      div.form-group
+        label.col-sm-3.control-label ID
+        div.col-sm-9
+          input.form-control(type="text", name="patientid", value=patientid)
+      div.form-group
+        label.col-sm-3.control-label Date
+        div.col-sm-9
+          .input-group.date(data-provide='datepicker', data-date-autoclose='true')
+            input.form-control(type="text", name="studydate", value=studydate)
+            .input-group-addon
+              span.glyphicon.glyphicon-calendar
+      div.form-group
+        label.col-sm-3.control-label StudyUID
+        div.col-sm-9
+          input.form-control(type="text", name="studyinstanceuid", value=studyinstanceuid)
+      div.form-group
+        div.col-sm-9.col-sm-offset-3
+          input.btn.btn-primary(name="submit", type="submit", value="Search")
+          | &nbsp;
+          a.btn.btn-default(href='/') Clear
+  div.col-md-8
+    table.table
+      thead
+        tr
+          th Name
+          th PatientID
+          th StudyDate
+          th Modalities
+          th Description
+          th Sex
+          th Birthdate
+      tbody
+        each item in results ? results : []
+          tr
+            td
+              = item.PatientName
+            td
+              = item.PatientID
+            td
+              = item.StudyDate
+            td
+              = item.ModalitiesInStudy
+            td
+              = item.StudyDescription
+            td
+              = item.PatientSex
+            td
+              = item.PatientBirthDate
+    if(error)
+      p.bg-danger
+        = error
+  div.col-md-12
+    div.col-md-6
+      h3 Selected Study Information
+      table.table
+        tr
+          th StudyInstanceUID
+          td
+        tr
+          th PatientName
+          td
+        tr
+          th PatientID
+          td
+        tr
+          th StudyDate
+          td
+        tr
+          th StudyDescription
+          td
+        tr
+          th PatientSex
+          td
+        tr
+          th PatientBirthDate
+          td
+    div.col-md-6
+      h3 Send Study
+      form.form-horizontal(name="sendstudy", method="post")
+        div.form-group
+          label.col-sm-3.control-label Name
+          div.col-sm-9
+            select.form-control(name="destination", value=destination)
+              each item in destinations ? destinations : []
+                option(value=item.id) item.name
