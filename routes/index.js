@@ -4,16 +4,24 @@ var moment = require('moment');
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', function(requst, response, next) {
+router.get('/', function(req, response, next) {
   response.render('index', { title: 'Express' });
 });
 
-function search(requestbody, response)
+router.post('/',function(req, response) {
+  if(req.body.submit == 'Search') {
+    search(req, response);
+  } else {
+    response.render('index');
+  }
+});
+
+function search(req, response)
 {
-  var patientname=requestbody.patientname;
-  var patientid=requestbody.patientid;
-  var studydate = getDate(requestbody.studydate);
-  var studyinstanceuid = requestbody.studyinstanceuid;
+  var patientname=req.body.patientname;
+  var patientid=req.body.patientid;
+  var studydate = getDate(req.body.studydate);
+  var studyinstanceuid = req.body.studyinstanceuid;
 
   var querystring = "";
   if(patientname)
@@ -35,34 +43,33 @@ function search(requestbody, response)
   }
   console.log("query=" + querystring);
 
-  request('http://localhost:8080/studies?' + querystring, function(error, agentresponse, agentbody) { procesresult(error, agentresponse, agentbody, requestbody, response) });
+  request('http://localhost:8080/studies?' + querystring, function(error, agentresponse, agentbody) { processresult(error, agentresponse, agentbody, req, response) });
 }
 
-function procesresult(error, agentresponse, agentbody, query, response) {
+function processresult(error, agentresponse, agentbody, req, response) {
+  var patientname = req.body.patientname;
+  var patientid = req.body.patientid;
+  var studydate = req.body.studydate;
+  var studyinstanceuid = req.body.studyinstanceuid;
+
   if (!error && agentresponse.statusCode == 200) {
     info = JSON.parse(agentbody);
 
     if(info.result)
       for (var i = 0; i < info.result.length; i++) {
-        var d = new Date(info.result[i].StudyDate);        
+        var d = new Date(info.result[i].StudyDate);
         info.result[i].StudyDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
         d = new Date(info.result[i].PatientBirthDate);
         info.result[i].PatientBirthDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
       }
 
-    response.render('index', { patientname: query.patientname, patientid: query.patientid, studydate: query.studydate, studyinstanceuid: query.studyinstanceuid, results: info.result});
+    response.render('index', { patientname, patientid, studydate, studyinstanceuid, results: info.result});
   } else {
-    response.render('index', { patientname: query.patientname, patientid: query.patientid, studydate: query.studydate, studyinstanceuid: query.studyinstanceuid, error: 'query failed'});
+    req.flash('error', 'Query failed');
+    response.render('index', { patientname, patientid, studydate, studyinstanceuid});
   }
 }
 
-router.post('/',function(requst, response) {
-  if(requst.body.submit == 'Search') {
-    search(requst.body, response);
-  } else {
-    response.render('index');
-  }
-});
 
 
 function getDate(dateAsString)
