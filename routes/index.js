@@ -42,12 +42,9 @@ function procesresult(error, agentresponse, agentbody, query, response) {
   if (!error && agentresponse.statusCode == 200) {
     info = JSON.parse(agentbody);
 
-    // fix datetime to just date
     if(info.result)
       for (var i = 0; i < info.result.length; i++) {
-        var d = new Date(info.result[i].StudyDate);
-        console.log(info.result[i].StudyDate);
-        console.log(d.toString());
+        var d = new Date(info.result[i].StudyDate);        
         info.result[i].StudyDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
         d = new Date(info.result[i].PatientBirthDate);
         info.result[i].PatientBirthDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
