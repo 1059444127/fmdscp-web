@@ -34,7 +34,7 @@ function process_destinations_list(error, agentresponse, agentbody, req, respons
   if (!error && agentresponse.statusCode == 200) {
     info = JSON.parse(agentbody);
 
-    response.render('destinations/index', { results: info.result});
+    response.render('destinations/index', { results: info.destinations});
   } else {
     req.flash('error', 'Failed');
     response.render('destinations/index');
@@ -45,11 +45,11 @@ function process_destinations_get(error, agentresponse, agentbody, req, response
   if (!error && agentresponse.statusCode == 200) {
     info = JSON.parse(agentbody);
 
-    var name = info.result[0].name;
-    var destinationhost = info.result[0].destinationhost;
-    var destinationport = info.result[0].destinationport;
-    var destinationAE = info.result[0].destinationAE;
-    var sourceAE = info.result[0].sourceAE;
+    var name = info.destination.name;
+    var destinationhost = info.destination.destinationhost;
+    var destinationport = info.destination.destinationport;
+    var destinationAE = info.destination.destinationAE;
+    var sourceAE = info.destination.sourceAE;
 
     response.render('destinations/update', { name, destinationhost, destinationport, destinationAE, sourceAE});
   } else {

@@ -87,8 +87,12 @@ block content
       h3 Send Study
       form.form-horizontal(name="sendstudy", method="post")
         div.form-group
-          label.col-sm-3.control-label Name
+          label.col-sm-3.control-label Destination
           div.col-sm-9
             select.form-control(name="destination", value=destination)
               each item in destinations ? destinations : []
-                option(value=item.id) item.name
+                option(value=item.id)
+                  = item.name
+        div.form-group
+          div.col-sm-9.col-sm-offset-3
+            input.btn.btn-primary(name="submit", type="submit", value="Send")

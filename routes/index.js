@@ -1,6 +1,7 @@
 var express = require('express');
 var request = require('request');
 var moment = require('moment');
+var async = require('async');
 var router = express.Router();
 
 /* GET home page. */
@@ -43,15 +44,35 @@ function search(req, response)
   }
   console.log("query=" + querystring);
 
-  request('http://localhost:8080/studies?' + querystring, function(error, agentresponse, agentbody) { processresult(error, agentresponse, agentbody, req, response) });
+  async.parallel({
+  destinations: function(callback) {
+    request('http://localhost:8080/api/destinations',
+      function(error, agentresponse, agentbody) {
+        process_destinations_list(error, agentresponse, agentbody, callback)
+      });
+  },
+  studies: function(callback) {
+    request('http://localhost:8080/studies?' + querystring,
+      function(error, agentresponse, agentbody) {
+        processresult(error, agentresponse, agentbody, callback)
+      });
+  }},
+  function(err, results) {
+    var patientname = req.body.patientname;
+    var patientid = req.body.patientid;
+    var studydate = req.body.studydate;
+    var studyinstanceuid = req.body.studyinstanceuid;
+    if(!err)
+    {
+      response.render('index', { patientname, patientid, studydate, studyinstanceuid, results: results.studies, destinations: results.destinations});
+    } else {
+      req.flash('error', 'Query failed');
+      response.render('index', { patientname, patientid, studydate, studyinstanceuid});
+    }
+  });
 }
 
-function processresult(error, agentresponse, agentbody, req, response) {
-  var patientname = req.body.patientname;
-  var patientid = req.body.patientid;
-  var studydate = req.body.studydate;
-  var studyinstanceuid = req.body.studyinstanceuid;
-
+function processresult(error, agentresponse, agentbody, callback) {
   if (!error && agentresponse.statusCode == 200) {
     info = JSON.parse(agentbody);
 
@@ -63,13 +84,21 @@ function processresult(error, agentresponse, agentbody, req, response) {
         info.result[i].PatientBirthDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
       }
 
-    response.render('index', { patientname, patientid, studydate, studyinstanceuid, results: info.result});
+    callback(null, info.studies)
   } else {
-    req.flash('error', 'Query failed');
-    response.render('index', { patientname, patientid, studydate, studyinstanceuid});
+    callback('study query failed', null);
   }
 }
 
+function process_destinations_list(error, agentresponse, agentbody, callback) {
+  if (!error && agentresponse.statusCode == 200) {
+    info = JSON.parse(agentbody);
+
+    callback(null, info.destinations);
+  } else {
+    callback('destination query failed', null);
+  }
+}
 
 
 function getDate(dateAsString)
