@@ -12,6 +12,8 @@ router.get('/', function(req, response, next) {
 router.post('/',function(req, response) {
   if(req.body.submit == 'Search') {
     search(req, response);
+  } else if(req.body.submit == 'Send') {
+    
   } else {
     response.render('index');
   }
