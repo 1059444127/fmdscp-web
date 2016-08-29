@@ -13,7 +13,7 @@ router.post('/',function(req, response) {
   if(req.body.submit == 'Search') {
     search(req, response);
   } else if(req.body.submit == 'Send') {
-    
+
   } else {
     response.render('index');
   }
@@ -78,13 +78,15 @@ function processresult(error, agentresponse, agentbody, callback) {
   if (!error && agentresponse.statusCode == 200) {
     info = JSON.parse(agentbody);
 
-    if(info.result)
-      for (var i = 0; i < info.result.length; i++) {
-        var d = new Date(info.result[i].StudyDate);
-        info.result[i].StudyDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
-        d = new Date(info.result[i].PatientBirthDate);
-        info.result[i].PatientBirthDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
+    if(info.studies) {
+      for (var i = 0;i < info.studies.length; i++) {
+        var item = info.studies[i];
+        var d = new Date(item.StudyDate);
+        item.StudyDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
+        d = new Date(item.PatientBirthDate);
+        item.PatientBirthDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
       }
+    }
 
     callback(null, info.studies)
   } else {
