@@ -97,7 +97,8 @@ block content
             select.form-control(name="destination", value=destination)
               each item in destinations ? destinations : []
                 option(value=item.id)
-                  = item.name        
+                  = item.name
+        input#StudyInstanceUID(type="hidden", name="StudyInstanceUID")
         div.form-group
           div.col-sm-9.col-sm-offset-3
             input.btn.btn-primary(name="submit", type="submit", value="Send")
@@ -107,9 +108,8 @@ block scripts
       $('#sendstudy').on('submit',function() {
         var selection = $('#studies').bootstrapTable('getSelections');
         if(selection.length > 0) {
-          console.log(selection[0].StudyInstanceUID);
-          console.log(selection[0]);
-          return false;
+          $('#StudyInstanceUID').val(selection[0].StudyInstanceUID);
+          return true;
         }
         else
           return false;

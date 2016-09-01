@@ -13,7 +13,22 @@ router.post('/',function(req, response) {
   if(req.body.submit == 'Search') {
     search(req, response);
   } else if(req.body.submit == 'Send') {
+      var formData = {
+        StudyInstanceUID: req.body.StudyInstanceUID,
+        destination: req.body.destination,
+      }
 
+      request.post('http://localhost:8080/api/studies/send', {form: formData},
+        function(error, agentresponse, agentbody) {
+          if (!error && agentresponse.statusCode == 200) {
+            req.flash('success', 'Sent');
+            response.redirect('/index');
+          }
+          else {
+            req.flash('error', 'Backend Failed');
+            response.render('index');
+          }
+        });
   } else {
     response.render('index');
   }
