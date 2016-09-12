@@ -63,48 +63,57 @@ block content
     if(messages.error)
       p.bg-danger
         = messages.error
-  div.col-md-12
-    div.col-md-6
-      h3 Selected Study Information
-      table.table
-        tr
-          th StudyInstanceUID
-          td
-        tr
-          th PatientName
-          td
-        tr
-          th PatientID
-          td
-        tr
-          th StudyDate
-          td
-        tr
-          th StudyDescription
-          td
-        tr
-          th PatientSex
-          td
-        tr
-          th PatientBirthDate
-          td
-    div.col-md-6
-      h3 Send Study
-      form#sendstudy.form-horizontal(name="sendstudy", method="post")
-        div.form-group
-          label.col-sm-3.control-label Destination
-          div.col-sm-6
-            select.form-control(name="destination", value=destination)
-              each item in destinations ? destinations : []
-                option(value=item.id)
-                  = item.name
-        input#StudyInstanceUID(type="hidden", name="StudyInstanceUID")
-        div.form-group
-          div.col-sm-9.col-sm-offset-3
-            input.btn.btn-primary(name="submit", type="submit", value="Send")
+  div#studyinfo
+    div.col-md-12
+      div.col-md-6
+        h3 Selected Study Information
+        table.table
+          tr
+            th StudyInstanceUID
+            td
+          tr
+            th PatientName
+            td
+          tr
+            th PatientID
+            td
+          tr
+            th StudyDate
+            td
+          tr
+            th StudyDescription
+            td
+          tr
+            th PatientSex
+            td
+          tr
+            th PatientBirthDate
+            td
+      div.col-md-6
+        h3 Send Study
+        form#sendstudy.form-horizontal(name="sendstudy", method="post")
+          div.form-group
+            label.col-sm-3.control-label Destination
+            div.col-sm-6
+              select.form-control(name="destination", value=destination)
+                each item in destinations ? destinations : []
+                  option(value=item.id)
+                    = item.name
+          input#StudyInstanceUID(type="hidden", name="StudyInstanceUID")
+          div.form-group
+            div.col-sm-9.col-sm-offset-3
+              input.btn.btn-primary(name="submit", type="submit", value="Send")
 block scripts
   script.
     $(function () {
+
+      $('#studies').on('click-row.bs.table', function (e, row, $element) {
+        console.log('clicked');
+        $.get("/study_partial/" + row.StudyInstanceUID, function(data) {
+          $('#studyinfo').html(data);
+        });
+      });
+
       $('#sendstudy').on('submit',function() {
         var selection = $('#studies').bootstrapTable('getSelections');
         if(selection.length > 0) {

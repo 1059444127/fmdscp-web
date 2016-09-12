@@ -1,0 +1,46 @@
+div.col-md-12
+  div.col-md-6
+    h3 Selected Study Information
+    table.table
+      tr
+        th StudyInstanceUID
+        td
+          = study.StudyInstanceUID
+      tr
+        th PatientName
+        td
+          = study.PatientName
+      tr
+        th PatientID
+        td
+          = study.PatientID
+      tr
+        th StudyDate
+        td
+          = study.StudyDate
+      tr
+        th StudyDescription
+        td
+          = study.StudyDescription
+      tr
+        th PatientSex
+        td
+          = study.PatientSex
+      tr
+        th PatientBirthDate
+        td
+          = study.PatientBirthDate
+  div.col-md-6
+    h3 Send Study
+    form#sendstudy.form-horizontal(name="sendstudy", method="post")
+      div.form-group
+        label.col-sm-3.control-label Destination
+        div.col-sm-6
+          select.form-control(name="destination", value=destination)
+            each item in destinations ? destinations : []
+              option(value=item.id)
+                = item.name
+      input#StudyInstanceUID(type="hidden", name="StudyInstanceUID")
+      div.form-group
+        div.col-sm-9.col-sm-offset-3
+          input.btn.btn-primary(name="submit", type="submit", value="Send")
