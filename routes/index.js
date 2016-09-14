@@ -35,7 +35,6 @@ router.post('/',function(req, response) {
 });
 
 router.get('/study_partial/:studyinstanceuid', function (req, res, next) {
-  console.log(req.params.studyinstanceuid);
   request.get('http://localhost:8080/api/studies/' + req.params.studyinstanceuid,
     function(error, agentresponse, agentbody) {
       if (!error && agentresponse.statusCode == 200) {
@@ -58,7 +57,8 @@ router.get('/study_partial/:studyinstanceuid', function (req, res, next) {
         res.render('study_partial', {layout: false, study: info.study});
       }
       else {
-        res.render('study_partial', {layout: false});
+        req.flash('error', 'Query failed');
+        res.render('error_partial', {layout: false});
       }
     });
 
@@ -89,7 +89,6 @@ function search(req, response)
     // overide any previous query
     querystring = 'StudyInstanceUID=' + studyinstanceuid;
   }
-  console.log("query=" + querystring);
 
   async.parallel({
   destinations: function(callback) {

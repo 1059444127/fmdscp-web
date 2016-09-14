@@ -8,6 +8,7 @@ var session = require('express-session');
 var flash = require('express-flash');
 
 var routes = require('./routes/index');
+var studies = require('./routes/studies');
 var users = require('./routes/users');
 var statuslist = require('./routes/statuslist');
 var destinations = require('./routes/destinations');
@@ -30,6 +31,7 @@ app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}));
 app.use(flash());
 
 app.use('/', routes);
+app.use('/studies', studies);
 app.use('/users', users);
 app.use('/statuslist', statuslist);
 app.use('/destinations', destinations);

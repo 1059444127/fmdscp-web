@@ -1,3 +1,6 @@
 extends layout
 
 block content
+  if(messages.error)
+    p.bg-danger
+      = messages.error
