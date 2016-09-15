@@ -10,14 +10,14 @@ router.get('/:studyinstanceuid', function(req, response, next) {
 
 router.post('/:studyinstanceuid/send',function(req, response) {
   if(req.body.submit == 'Send') {
-    var formData = {      
+    var formData = {
       destination: req.body.destination,
     }
 
     request.post('http://localhost:8080/api/studies/' + req.params.studyinstanceuid + '/send', {form: formData},
       function(error, agentresponse, agentbody) {
         if (!error && agentresponse.statusCode == 200) {
-          req.flash('success', 'Sent');
+          req.flash('success', 'Sending');
           response.redirect('/statuslist');
         }
         else {
