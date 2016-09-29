@@ -6,6 +6,10 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var flash = require('express-flash');
+var webpackDevMiddleware = require('webpack-dev-middleware');
+var webpack = require('webpack');
+var webpackConfig = require('./webpack.config.js');
+
 
 var routes = require('./routes/index');
 var studies = require('./routes/studies');
@@ -36,6 +40,17 @@ app.use('/users', users);
 app.use('/statuslist', statuslist);
 app.use('/destinations', destinations);
 app.use('/createdb', createdb);
+
+var compiler = webpack(webpackConfig);
+app.use(webpackDevMiddleware(compiler, {
+  hot: true,
+  filename: 'bundle.js',
+  publicPath: '/',
+  stats: {
+    colors: true,
+  },
+  historyApiFallback: true,
+}));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

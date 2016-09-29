@@ -6,36 +6,11 @@ block content
     if(messages.success)
       p.bg-success
         = messages.success
-    table.table.table-bordered
-      thead
-        tr
-          th uuid
-          th StudyInstanceUID
-          th PatientID
-          th PatientName
-          th Destination
-          th last update
-          th status
-      tbody
-        each item in sessions ? sessions : []
-          tr
-            td
-              = item.uuid
-            td
-              a(href='/studies/' + item.StudyInstanceUID)
-                = item.StudyInstanceUID
-            td
-              = item.PatientID
-            td
-              = item.PatientName
-            td
-              = item.destination_name
-            td
-              = item.updatedAt
-            td
-              = item.status
-
-      tfoot
+    script.
+      window.__INITIAL_STATE__ = { statuslist: !{JSON.stringify(sessions)} };
+    div#mount
     if(messages.error)
       p.bg-danger
         = messages.error
+block scripts
+  script(src='/bundle.js')
