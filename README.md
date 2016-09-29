@@ -13,7 +13,9 @@ Simple DICOM SCP
 npm install
 npm run start
 ```
-browse to http://localhost:3000
+
+- browse to http://localhost:3000/
+- browse to http://localhost:3000/createdb to create the database
 
 ## Author
 Ing-Long Eric Kuo <draconpern@hotmail.com>
