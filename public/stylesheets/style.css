@@ -18,3 +18,7 @@ body {
 .imageslice {
   padding: 1px;
 }
+
+.uuid {
+  font-size: 50%;
+}

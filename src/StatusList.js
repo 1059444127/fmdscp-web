@@ -5,7 +5,7 @@ class StatusListItem extends Component {
   render() {
     return (
       <tr>
-        <td>{this.props.uuid}</td>
+        <td><div className='uuid'>{this.props.uuid}</div></td>
         <td>
            <a href={'/studies/' + this.props.StudyInstanceUID}>{this.props.StudyInstanceUID}</a>
         </td>
