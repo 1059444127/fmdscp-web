@@ -25,6 +25,9 @@ router.get('/update/:id', function(req, response, next) {
 router.post('/update/:id',function(req, response) {
   if(req.body.submit == 'Update') {
      update(req, response);
+  } if(req.body.submit == 'Delete') {
+    //update(req, response);
+    response.redirect('/destinations');
   } else {
     response.render('destinations/index');
   }
