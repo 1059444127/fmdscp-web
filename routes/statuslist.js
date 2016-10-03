@@ -24,9 +24,10 @@ function getstatuslist(req, response) {
       }
       else {
         req.flash('error', 'Backend Failed');
-        response.render('statuslist');
+        response.render('statuslist', { sessions: []});
       }
-    });
+    }
+  );
 }
 
 module.exports = router;
