@@ -12,7 +12,7 @@ const statuslistitemReducer = (state = {}, action) => {
   }
 };
 
-const statuslistReducer = (state = {}, action) => {  
+const statuslistReducer = (state = {}, action) => {
   switch (action.type) {
     case 'UPDATE_OUTSESSIONITEM':
       var found = state.findIndex((element, index, array) => { return (action.item.uuid == element.uuid) });
@@ -31,7 +31,7 @@ const statuslistReducer = (state = {}, action) => {
           status: action.item.status,
           updatedAt: action.item.updatedAt },
           ...state];
-    case 'SET_OUTSESSION':
+    case 'SET_OUTSESSIONS':
       return action.statuslist;
     default:
       return state;
