@@ -8,12 +8,19 @@ import rootReducer from './statuslistreducer';
 
 const initialState = window.__INITIAL_STATE__;
 
-let store = createStore(rootReducer, initialState)
+let store = createStore(rootReducer, initialState, window.devToolsExtension && window.devToolsExtension());
 
 const socket = io(`${location.protocol}//${location.hostname}:3000`);
-socket.on('updateoutsessionitem', state =>
-  store.dispatch({type: 'UPDATE_OUTSESSIONITEM', item: state})
+socket.on('updateoutsessionitem', data =>
+  store.dispatch({type: 'UPDATE_OUTSESSIONITEM', item: data})
 );
+
+socket.on('setoutsessions', data =>
+  store.dispatch({type: 'SET_OUTSESSIONS', statuslist: data})
+);
+
+// tell the server we are a front end
+socket.emit('front_end', '');
 
 render(
   <Provider store={store}>
