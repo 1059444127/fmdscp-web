@@ -9,7 +9,9 @@ io.on('connection', (socket) => {
   // they are a backend
   socket.on('agent_auth', (data) => {
     console.log('backend connected');
+
     socket.agent_auth = data.access_token;
+    socket.join('backend-xyz');
 
     // set up to receive log
     socket.on('log', (data) => {
@@ -20,7 +22,7 @@ io.on('connection', (socket) => {
     // set up to receive sessions
     socket.on('updateoutsessionitem', (data) => {
       // just send it out to everyone
-      io.emit('updateoutsessionitem', data)
+      socket.to('frontends').emit('updateoutsessionitem', data);
     });
 
   });
@@ -28,6 +30,9 @@ io.on('connection', (socket) => {
 // they are a frontend
   socket.on('front_end', (data) => {
     console.log('frontend connected');
+    
+    socket.join('frontends');
+
     // update status list with the latest
     request('http://localhost:8080/api/outsessions',
       function(error, agentresponse, agentbody) {
