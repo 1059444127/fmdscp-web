@@ -34,36 +34,6 @@ router.post('/',function(req, response) {
   }
 });
 
-router.get('/study_partial/:studyinstanceuid', function (req, res, next) {
-  request.get('http://localhost:8080/api/studies/' + req.params.studyinstanceuid,
-    function(error, agentresponse, agentbody) {
-      if (!error && agentresponse.statusCode == 200) {
-        info = JSON.parse(agentbody);
-        if(info.study) {
-          var d = new Date(info.study.StudyDate);
-          info.study.StudyDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
-          var d = new Date(info.study.PatientBirthDate);
-          info.study.PatientBirthDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
-        }
-
-        if(info.series) {
-          for (var i = 0;i < info.series.length; i++) {
-            var item = info.series[i];
-            var d = new Date(item.SeriesDate);
-            item.SeriesDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
-          }
-        }
-
-        res.render('study_partial', {layout: false, study: info.study});
-      }
-      else {
-        req.flash('error', 'Query failed');
-        res.render('error_partial', {layout: false});
-      }
-    });
-
-});
-
 function search(req, response)
 {
   var patientname=req.body.patientname;
@@ -125,10 +95,8 @@ function processresult(error, agentresponse, agentbody, callback) {
     if(info.studies) {
       for (var i = 0;i < info.studies.length; i++) {
         var item = info.studies[i];
-        var d = new Date(item.StudyDate);
-        item.StudyDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
-        d = new Date(item.PatientBirthDate);
-        item.PatientBirthDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
+        item.StudyDateFormatted = moment(item.StudyDate).format('l');
+        item.PatientBirthDateFormatted = moment(item.PatientBirthDate).format('l');
       }
     }
 

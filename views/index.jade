@@ -51,7 +51,10 @@ block content
             td
               = item.PatientID
             td
-              = item.StudyDate
+              span(style='display: none')
+                = item.StudyDate
+              div
+                = item.StudyDateFormatted
             td
               = item.ModalitiesInStudy
             td
@@ -59,7 +62,10 @@ block content
             td
               = item.PatientSex
             td
-              = item.PatientBirthDate
+              span(style='display: none')
+                = item.PatientBirthDate
+              div
+                = item.PatientBirthDateFormatted
     if(messages.error)
       p.bg-danger
         = messages.error

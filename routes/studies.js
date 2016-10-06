@@ -44,17 +44,15 @@ function getstudy(req, response) {
         if (!error && agentresponse.statusCode == 200) {
           info = JSON.parse(agentbody);
           if(info.study) {
-            var d = new Date(info.study.StudyDate);
-            info.study.StudyDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
-            var d = new Date(info.study.PatientBirthDate);
-            info.study.PatientBirthDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
+            var item = info.study;
+            item.StudyDateFormatted = moment(item.StudyDate).format('l');
+            item.PatientBirthDateFormatted = moment(item.PatientBirthDate).format('l');
           }
 
           if(info.series) {
             for (var i = 0;i < info.series.length; i++) {
               var item = info.series[i];
-              var d = new Date(item.SeriesDate);
-              item.SeriesDate = (1 + d.getMonth()) + "/" + (1 + d.getDay()) + "/" + d.getFullYear();
+              item.SeriesDateFormatted = moment(item.SeriesDate).format('l');
             }
           }
 
