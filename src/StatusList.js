@@ -21,8 +21,8 @@ class StatusListItem extends Component {
 };
 
 function fixdate(date) {
-  var d = new Date(date);
-  return d.toLocaleString();
+  var d = moment(date);
+  return d.format('lll');
 }
 /*
 StatusListItem.propTypes = {
