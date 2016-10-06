@@ -1,12 +1,23 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import axios from 'axios';
 
 class StatusListItem extends Component {
+  constructor(props) {
+    super(props);
+
+    this.cancelhandler = this.cancelhandler.bind(this);
+  }
+
+  cancelhandler() {
+    axios.post('/statuslist/cancel', {uuid: this.props.uuid});
+  }
+
   render() {
     var nodisplay = { display: 'none' };
     return (
       <tr>
-        <td>{this.props.uuid}</td>
+        <td className='uuid'>{this.props.uuid}</td>
         <td>
            <a href={'/studies/' + this.props.StudyInstanceUID}>{this.props.StudyInstanceUID}</a>
         </td>
@@ -16,6 +27,7 @@ class StatusListItem extends Component {
         <td><span style={nodisplay}>{this.props.updatedAt}</span><div>{fixdate(this.props.updatedAt)}</div></td>
         <td><span style={nodisplay}>{this.props.createdAt}</span><div>{fixdate(this.props.createdAt)}</div></td>
         <td>{this.props.status}</td>
+        <td><input type='button' onClick={this.cancelhandler} value='Cancel' /></td>
       </tr>
     );
   }
@@ -40,17 +52,18 @@ class StatusList extends Component {
 
   render() {
     return (
-      <table className='table table-bordered' data-toggle="table" data-unique-id="uuid">
+      <table ref='mytable' className='table table-bordered'>
         <thead>
           <tr>
-            <th data-visible="false" data-field="StudyInstanceUID">uuid</th>
+            <th>uuid</th>
             <th>StudyInstanceUID</th>
             <th>PatientID</th>
             <th>PatientName</th>
             <th>Destination</th>
-            <th data-sortable="true">last update</th>
-            <th data-sortable="true">started at</th>
+            <th>last update</th>
+            <th>started at</th>
             <th>status</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>

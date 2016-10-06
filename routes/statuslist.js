@@ -6,6 +6,20 @@ router.get('/', function(req, res, next) {
   getstatuslist(req, res);
 });
 
+
+router.post('/cancel', function(req, res, next) {
+  request.post('http://localhost:8080/api/outsessions/cancel', { form: {uuid: req.body.uuid} },
+    function(error, agentresponse, agentbody) {
+      if (!error && agentresponse.statusCode == 200) {
+        res.json({result: 'ok'});
+      }
+      else {
+        res.json({result: 'fail'});
+      }
+    });
+});
+
+
 function getstatuslist(req, response) {
   request('http://localhost:8080/api/outsessions',
     function(error, agentresponse, agentbody) {
@@ -20,5 +34,6 @@ function getstatuslist(req, response) {
     }
   );
 }
+
 
 module.exports = router;
