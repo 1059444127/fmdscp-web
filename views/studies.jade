@@ -73,4 +73,4 @@ block content
       each seriesitem in study.series ? study.series : []
         each item in seriesitem.SOPInstanceUIDs ? seriesitem.SOPInstanceUIDs : []
           a(href='http://' + (process.env.BACKENDFQDN || 'localhost') + ':8080/studies?requestType=WADO&studyUID=' + study.StudyInstanceUID + '&seriesUID=' + seriesitem.SeriesInstanceUID + '&objectUID=' + item)
-            img.imageslice(width=200 src='http://localhost:8080/studies?requestType=WADO&width=200&studyUID=' + study.StudyInstanceUID + '&seriesUID=' + seriesitem.SeriesInstanceUID + '&objectUID=' + item)
+            img.imageslice(width=200 src='http://' + (process.env.BACKENDFQDN || 'localhost') + ':8080/studies?requestType=WADO&width=200&studyUID=' + study.StudyInstanceUID + '&seriesUID=' + seriesitem.SeriesInstanceUID + '&objectUID=' + item)
