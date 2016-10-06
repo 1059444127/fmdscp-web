@@ -15,10 +15,11 @@ const statuslistitemReducer = (state = {}, action) => {
 const statuslistReducer = (state = {}, action) => {
   switch (action.type) {
     case 'UPDATE_OUTSESSIONITEM':
-      var found = state.findIndex((element, index, array) => { return (action.item.uuid == element.uuid) });
-      if(found != -1) {
-        state[found].updatedAt = action.item.updatedAt;
-        state[found].status = action.item.status;
+      var f;
+      var found = state.some((element, index, array) => { f = index; return (action.item.uuid == element.uuid) });
+      if(found) {
+        state[f].updatedAt = action.item.updatedAt;
+        state[f].status = action.item.status;
         return [ ...state];
       }
       else
