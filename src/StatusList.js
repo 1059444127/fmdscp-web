@@ -22,7 +22,7 @@ class StatusListItem extends Component {
 
 function fixdate(date) {
   var d = new Date(date);
-  return d.toLocaleDateString() + " " + d.toLocaleTimeString();
+  return d.toLocaleString();
 }
 /*
 StatusListItem.propTypes = {
