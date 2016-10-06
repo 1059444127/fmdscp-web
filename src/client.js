@@ -20,7 +20,8 @@ socket.on('setoutsessions', data =>
 );
 
 // tell the server we are a front end
-socket.emit('front_end', '');
+socket.on('connect', () =>
+  socket.emit('front_end', ''));
 
 render(
   <Provider store={store}>
