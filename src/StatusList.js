@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 class StatusListItem extends Component {
   render() {
+    var nodisplay = { display: 'none' };
     return (
       <tr>
         <td>{this.props.uuid}</td>
@@ -12,8 +13,8 @@ class StatusListItem extends Component {
         <td>{this.props.PatientID}</td>
         <td>{this.props.PatientName}</td>
         <td>{this.props.destination_name}</td>
-        <td>{fixdate(this.props.updatedAt)}</td>
-        <td>{fixdate(this.props.createdAt)}</td>
+        <td><span style={nodisplay}>{this.props.updatedAt}</span><div>{fixdate(this.props.updatedAt)}</div></td>
+        <td><span style={nodisplay}>{this.props.createdAt}</span><div>{fixdate(this.props.createdAt)}</div></td>
         <td>{this.props.status}</td>
       </tr>
     );

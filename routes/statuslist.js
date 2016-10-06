@@ -11,15 +11,6 @@ function getstatuslist(req, response) {
     function(error, agentresponse, agentbody) {
       if (!error && agentresponse.statusCode == 200) {
         info = JSON.parse(agentbody);
-
-        if(info.sessions) {
-          for (var i = 0;i < info.sessions.length; i++) {
-            var item = info.sessions[i];
-            var d = new Date(item.updatedAt);
-            item.updatedAt = d.toLocaleDateString() + " " + d.toLocaleTimeString();
-          }
-        }
-
         response.render('statuslist', { sessions: info.sessions});
       }
       else {
