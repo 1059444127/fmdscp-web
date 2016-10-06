@@ -5,7 +5,7 @@ class StatusListItem extends Component {
   render() {
     return (
       <tr>
-        <td><div className='uuid'>{this.props.uuid}</div></td>
+        <td>{this.props.uuid}</td>
         <td>
            <a href={'/studies/' + this.props.StudyInstanceUID}>{this.props.StudyInstanceUID}</a>
         </td>
@@ -13,6 +13,7 @@ class StatusListItem extends Component {
         <td>{this.props.PatientName}</td>
         <td>{this.props.destination_name}</td>
         <td>{fixdate(this.props.updatedAt)}</td>
+        <td>{fixdate(this.props.createdAt)}</td>
         <td>{this.props.status}</td>
       </tr>
     );
@@ -38,15 +39,16 @@ class StatusList extends Component {
 
   render() {
     return (
-      <table className='table table-bordered'>
+      <table className='table table-bordered' data-toggle="table" data-unique-id="uuid">
         <thead>
           <tr>
-            <th>uuid</th>
+            <th data-visible="false" data-field="StudyInstanceUID">uuid</th>
             <th>StudyInstanceUID</th>
             <th>PatientID</th>
             <th>PatientName</th>
             <th>Destination</th>
-            <th>last update</th>
+            <th data-sortable="true">last update</th>
+            <th data-sortable="true">started at</th>
             <th>status</th>
           </tr>
         </thead>

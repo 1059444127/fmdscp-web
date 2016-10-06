@@ -29,7 +29,8 @@ const statuslistReducer = (state = {}, action) => {
           PatientName: action.item.PatientName,
           destination_name: action.item.destination_name,
           status: action.item.status,
-          updatedAt: action.item.updatedAt },
+          updatedAt: action.item.updatedAt,
+          createdAt: action.item.createdAt },
           ...state];
     case 'SET_OUTSESSIONS':
       return action.statuslist;
