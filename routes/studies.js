@@ -17,7 +17,6 @@ router.post('/:studyinstanceuid/send',function(req, response) {
     request.post('http://localhost:8080/api/studies/' + req.params.studyinstanceuid + '/send', {form: formData},
       function(error, agentresponse, agentbody) {
         if (!error && agentresponse.statusCode == 200) {
-          req.flash('success', 'Sending');
           response.redirect('/statuslist');
         }
         else {
