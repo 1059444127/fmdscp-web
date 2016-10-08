@@ -16,7 +16,7 @@ var studies = require('./routes/studies');
 var users = require('./routes/users');
 var statuslist = require('./routes/statuslist');
 var destinations = require('./routes/destinations');
-var createdb = require('./routes/createdb');
+var setupsystem = require('./routes/setupsystem');
 
 var app = express();
 
@@ -39,7 +39,7 @@ app.use('/studies', studies);
 app.use('/users', users);
 app.use('/statuslist', statuslist);
 app.use('/destinations', destinations);
-app.use('/createdb', createdb);
+app.use('/setupsystem', setupsystem);
 
 var compiler = webpack(webpackConfig);
 app.use(webpackDevMiddleware(compiler, {
