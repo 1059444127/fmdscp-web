@@ -69,6 +69,7 @@ function installdb() {
     PatientSex: {type: Sequelize.STRING},
     PatientBirthDate: {type: Sequelize.DATE},
     ReferringPhysicianName: {type: Sequelize.STRING},
+    NumberOfStudyRelatedInstances: {type: Sequelize.INTEGER}
   });
 
   var Series = sequelize.define('series', {
