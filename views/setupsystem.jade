@@ -1,0 +1,17 @@
+extends layout
+block title
+  |  Setup System
+block content
+  div.col-md-4
+    if(messages.success)
+      p.bg-success
+        = messages.success    
+    if(messages.error)
+      p.bg-danger
+        = messages.error
+    form.form-horizontal(name="setupsystem", method="post")
+      div.form-group
+        div.col-sm-9.col-sm-offset-3
+          input.btn.btn-primary(name="submit", type="submit", value="Install DB")
+          | &nbsp;
+          input.btn.btn-primary(name="submit", type="submit", value="Stop Backend")

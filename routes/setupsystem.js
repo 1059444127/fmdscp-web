@@ -10,7 +10,7 @@ router.get('/', function(req, response, next) {
 router.post('/',function(req, response) {
   if(req.body.submit == 'Install DB') {
     installdb();
-    req.flash('error', 'Created');
+    req.flash('success', 'Created');
     response.render('setupsystem');
   } else if(req.body.submit == 'Stop Backend') {
     request.post('http://localhost:8080/api/shutdown', {},
