@@ -31,7 +31,10 @@ function installdb() {
   var sequelize = new Sequelize('test', 'root', 'root', {
     host: 'mysql',
     dialect: 'mysql',
-
+    define: {
+    charset: 'utf8',
+    collate: 'utf8_general_ci'
+    },
     pool: {
       max: 5,
       min: 0,
@@ -78,14 +81,16 @@ function installdb() {
     SeriesDescription: {type: Sequelize.STRING},
     SeriesNumber: {type: Sequelize.INTEGER},
     SeriesDate: {type: Sequelize.DATE},
-    patient_study_id: {type: Sequelize.INTEGER, references: {model: patient_study, key: 'id'} }
+    // patient_study_id: {type: Sequelize.INTEGER, references: {model: patient_study, key: 'id'} }
   });
+  Series.belongsTo(patient_study, {foreignKey: 'patient_study_id', onDelete: 'CASCADE'});
 
   var Instance = sequelize.define('instance', {
     SOPInstanceUID: {type: Sequelize.STRING},
     InstanceNumber: {type: Sequelize.INTEGER},
-    series_id: {type: Sequelize.INTEGER, references: {model: Series, key: 'id'} }
+    // series_id: {type: Sequelize.INTEGER, references: {model: Series, key: 'id'} }
   });
+  Instance.belongsTo(Series, {foreignKey: 'series_id', onDelete: 'CASCADE'});
 
   var Outgoing_sessions = sequelize.define('outgoing_session', {
     uuid: {type: Sequelize.STRING},
@@ -97,7 +102,7 @@ function installdb() {
     status: {type: Sequelize.STRING},
   });
   // force: true will drop the table if it already exists
-  sequelize.sync({force: true}).then(function () {
+  sequelize.sync({force: false}).then(function () {
     // Table created
 
   });
