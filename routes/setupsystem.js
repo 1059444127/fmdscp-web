@@ -61,7 +61,7 @@ function installdb() {
   });
 
   var patient_study = sequelize.define('patient_study', {
-    StudyInstanceUID: {type: Sequelize.STRING},
+    StudyInstanceUID: {type: Sequelize.STRING, unique: true},
     StudyID: {type: Sequelize.STRING},
     AccessionNumber: {type: Sequelize.STRING},
     PatientName: {type: Sequelize.STRING},
@@ -76,21 +76,19 @@ function installdb() {
   });
 
   var Series = sequelize.define('series', {
-    SeriesInstanceUID: {type: Sequelize.STRING},
+    SeriesInstanceUID: {type: Sequelize.STRING, unique: true},
     Modality: {type: Sequelize.STRING},
     SeriesDescription: {type: Sequelize.STRING},
     SeriesNumber: {type: Sequelize.INTEGER},
     SeriesDate: {type: Sequelize.DATE},
-    // patient_study_id: {type: Sequelize.INTEGER, references: {model: patient_study, key: 'id'} }
+    patient_study_id: {type: Sequelize.INTEGER, references: {model: patient_study, key: 'id'} }
   });
-  Series.belongsTo(patient_study, {foreignKey: 'patient_study_id', onDelete: 'CASCADE'});
 
   var Instance = sequelize.define('instance', {
     SOPInstanceUID: {type: Sequelize.STRING},
     InstanceNumber: {type: Sequelize.INTEGER},
-    // series_id: {type: Sequelize.INTEGER, references: {model: Series, key: 'id'} }
+    series_id: {type: Sequelize.INTEGER, references: {model: Series, key: 'id'} }
   });
-  Instance.belongsTo(Series, {foreignKey: 'series_id', onDelete: 'CASCADE'});
 
   var Outgoing_sessions = sequelize.define('outgoing_session', {
     uuid: {type: Sequelize.STRING},
