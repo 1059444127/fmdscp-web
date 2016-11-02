@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+// load environment
+dotenv.load();
+
 /**
  * Module dependencies.
  */
@@ -10,8 +13,6 @@ var debug = require('debug')('fmdscp-web:server');
 var http = require('http');
 var dotenv = require('dotenv');
 
-// load environment
-dotenv.load();
 
 /**
  * Get port from environment and store in Express.
