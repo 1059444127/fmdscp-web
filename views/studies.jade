@@ -56,17 +56,18 @@ block content
         = messages.error
   div.col-md-6
     h3 Send Study
-    form#sendstudy.form-horizontal(name="sendstudy", method="post" action='/studies/' + (study.StudyInstanceUID ? study.StudyInstanceUID : '') + '/send')
-      div.form-group
-        label.col-sm-3.control-label Destination
-        div.col-sm-6
-          select.form-control(name="destination", value=destination)
-            each item in destinations ? destinations : []
-              option(value=item.id)
-                = item.name
-      div.form-group
-        div.col-sm-9.col-sm-offset-3
-          input.btn.btn-primary(name="submit", type="submit", value="Send")
+    if(study)
+      form#sendstudy.form-horizontal(name="sendstudy", method="post" action='/studies/' + (study.StudyInstanceUID ? study.StudyInstanceUID : '') + '/send')
+        div.form-group
+          label.col-sm-3.control-label Destination
+          div.col-sm-6
+            select.form-control(name="destination", value=destination)
+              each item in destinations ? destinations : []
+                option(value=item.id)
+                  = item.name
+        div.form-group
+          div.col-sm-9.col-sm-offset-3
+            input.btn.btn-primary(name="submit", type="submit", value="Send")
   div.col-md-12
     h3 Images
     if(study)
