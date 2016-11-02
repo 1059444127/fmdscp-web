@@ -10,14 +10,6 @@ var webpackDevMiddleware = require('webpack-dev-middleware');
 var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
 
-
-var routes = require('./routes/index');
-var studies = require('./routes/studies');
-var users = require('./routes/users');
-var statuslist = require('./routes/statuslist');
-var destinations = require('./routes/destinations');
-var setupsystem = require('./routes/setupsystem');
-
 var app = express();
 
 // view engine setup
@@ -34,13 +26,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}));
 app.use(flash());
 
+// routes
+var routes = require('./routes/index');
 app.use('/', routes);
+
+var studies = require('./routes/studies');
 app.use('/studies', studies);
-app.use('/users', users);
+
+var statuslist = require('./routes/statuslist');
 app.use('/statuslist', statuslist);
+
+var destinations = require('./routes/destinations');
 app.use('/destinations', destinations);
+
+var setupsystem = require('./routes/setupsystem');
 app.use('/setupsystem', setupsystem);
 
+// webpack to compile react client files
 var compiler = webpack(webpackConfig);
 app.use(webpackDevMiddleware(compiler, {
   hot: true,
