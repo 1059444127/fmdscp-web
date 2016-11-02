@@ -8,6 +8,10 @@ var app = require('../app');
 var io = require('../socketio');
 var debug = require('debug')('fmdscp-web:server');
 var http = require('http');
+var dotenv = require('dotenv');
+
+// load environment
+dotenv.load();
 
 /**
  * Get port from environment and store in Express.
