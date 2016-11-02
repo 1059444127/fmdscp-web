@@ -25,9 +25,9 @@ router.get('/update/:id', function(req, response, next) {
 
 router.post('/update/:id',function(req, response) {
   if(req.body.submit == 'Update') {
-     update(req, response);
-  } if(req.body.submit == 'Delete') {
-    //update(req, response);
+    update(req, response);
+  } else if(req.body.submit == 'Delete') {
+    // update(req, response);
     response.redirect('/destinations');
   } else {
     response.render('destinations/index');
@@ -85,8 +85,7 @@ function add(req, response)
       if (!error && agentresponse.statusCode == 200) {
         req.flash('success', 'Added');
         response.redirect('/destinations');
-      }
-      else {
+      } else {
         req.flash('error', 'Query Failed');
         response.render('destinations/new', { name, destinationhost, destinationport, destinationAE, sourceAE});
       }
@@ -117,8 +116,7 @@ function update(req, response)
       if (!error && agentresponse.statusCode == 200) {
         req.flash('success', 'Updated');
         response.redirect('/destinations');
-      }
-      else {
+      } else {
         req.flash('error', 'Failed');
         response.render('destinations/update', { name, destinationhost, destinationport, destinationAE, sourceAE});
       }
