@@ -11,13 +11,12 @@ Simple DICOM SCP
 ## Running
 ```
 npm install
-cp .sample-env .env
 npm run start
 ```
 - browse to http://localhost:3000/
 - browse to http://localhost:3000/setupsystem to create the database
 
-edit .env to set various options
+copy .sample-env to .env and edit to set various options
 ## Author
 Ing-Long Eric Kuo <draconpern@hotmail.com>
 
