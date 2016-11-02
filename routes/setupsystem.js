@@ -1,6 +1,7 @@
 var Sequelize = require('sequelize');
 var express = require('express');
 var request = require('request');
+var config = require('../config');
 var router = express.Router();
 
 router.get('/', function(req, response, next) {
@@ -13,7 +14,7 @@ router.post('/',function(req, response) {
     req.flash('success', 'Created');
     response.render('setupsystem');
   } else if(req.body.submit == 'Stop Backend') {
-    request.post('http://localhost:8080/api/shutdown', {},
+    request.post(config.backend + '/api/shutdown', {},
       function(error, agentresponse, agentbody) {
         if (!error && agentresponse.statusCode == 200) {
           req.flash('success', 'Shutdown');
@@ -28,8 +29,8 @@ router.post('/',function(req, response) {
 });
 
 function installdb() {
-  var sequelize = new Sequelize('test', 'root', 'root', {
-    host: 'mysql',
+  var sequelize = new Sequelize(config.db_name, config.db_username, config.db_password, {
+    host: config.db_host,
     dialect: 'mysql',
     define: {
     charset: 'utf8',

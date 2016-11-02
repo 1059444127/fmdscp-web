@@ -1,5 +1,6 @@
 var Server = require('socket.io');
 var request = require('request');
+var config = require('./config');
 var io = new Server();
 
 io.on('connection', (socket) => {
@@ -30,11 +31,11 @@ io.on('connection', (socket) => {
 // they are a frontend
   socket.on('front_end', (data) => {
     console.log('frontend connected');
-    
+
     socket.join('frontends');
 
     // update status list with the latest
-    request('http://localhost:8080/api/outsessions',
+    request(config.backend + '/api/outsessions',
       function(error, agentresponse, agentbody) {
         if (!error && agentresponse.statusCode == 200) {
           info = JSON.parse(agentbody);

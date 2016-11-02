@@ -1,2 +1,7 @@
 PORT=3000
-BACKENDFQDN=localhost
+BACKEND_HOST=localhost
+BACKEND_PORT=8080
+DB_HOST=localhost
+DB_NAME=pacs
+DB_USERNAME=root
+DB_PASSWORD=root

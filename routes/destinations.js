@@ -1,9 +1,10 @@
 var express = require('express');
 var request = require('request');
+var config = require('../config');
 var router = express.Router();
 
 router.get('/', function(req, response, next) {
-  request('http://localhost:8080/api/destinations', function(error, agentresponse, agentbody) { process_destinations_list(error, agentresponse, agentbody, req, response) });
+  request(config.backend + '/api/destinations', function(error, agentresponse, agentbody) { process_destinations_list(error, agentresponse, agentbody, req, response) });
 });
 
 router.get('/new', function(req, response, next) {
@@ -19,7 +20,7 @@ router.post('/new',function(req, response) {
 });
 
 router.get('/update/:id', function(req, response, next) {
-  request('http://localhost:8080/api/destinations/' + req.params.id, function(error, agentresponse, agentbody) { process_destinations_get(error, agentresponse, agentbody, req, response) });
+  request(config.backend + '/api/destinations/' + req.params.id, function(error, agentresponse, agentbody) { process_destinations_get(error, agentresponse, agentbody, req, response) });
 });
 
 router.post('/update/:id',function(req, response) {
@@ -79,7 +80,7 @@ function add(req, response)
     sourceAE: sourceAE
   }
 
-  request.post('http://localhost:8080/api/destinations', {form: formData},
+  request.post(config.backend + '/api/destinations', {form: formData},
     function(error, agentresponse, agentbody) {
       if (!error && agentresponse.statusCode == 200) {
         req.flash('success', 'Added');
@@ -111,7 +112,7 @@ function update(req, response)
     sourceAE: sourceAE
   }
 
-  request.post('http://localhost:8080/api/destinations/' + req.params.id, {form: formData},
+  request.post(config.backend + '/api/destinations/' + req.params.id, {form: formData},
     function(error, agentresponse, agentbody) {
       if (!error && agentresponse.statusCode == 200) {
         req.flash('success', 'Updated');

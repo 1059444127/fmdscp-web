@@ -2,6 +2,7 @@ var express = require('express');
 var request = require('request');
 var moment = require('moment');
 var async = require('async');
+var config = require('../config');
 var router = express.Router();
 
 /* GET home page. */
@@ -18,7 +19,7 @@ router.post('/',function(req, response) {
         destination: req.body.destination,
       }
 
-      request.post('http://localhost:8080/api/studies/send', {form: formData},
+      request.post(config.backend + '/api/studies/send', {form: formData},
         function(error, agentresponse, agentbody) {
           if (!error && agentresponse.statusCode == 200) {
             req.flash('success', 'Sent');
@@ -62,13 +63,13 @@ function search(req, response)
 
   async.parallel({
   destinations: function(callback) {
-    request('http://localhost:8080/api/destinations',
+    request(config.backend + '/api/destinations',
       function(error, agentresponse, agentbody) {
         process_destinations_list(error, agentresponse, agentbody, callback)
       });
   },
   studies: function(callback) {
-    request('http://localhost:8080/api/studies?' + querystring,
+    request(config.backend + '/api/studies?' + querystring,
       function(error, agentresponse, agentbody) {
         processresult(error, agentresponse, agentbody, callback)
       });
