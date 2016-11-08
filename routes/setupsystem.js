@@ -86,7 +86,7 @@ function installdb() {
   });
 
   var Instance = sequelize.define('instance', {
-    SOPInstanceUID: {type: Sequelize.STRING},
+    SOPInstanceUID: {type: Sequelize.STRING, unique: true},
     InstanceNumber: {type: Sequelize.INTEGER},
     series_id: {type: Sequelize.INTEGER, references: {model: Series, key: 'id'} }
   });
