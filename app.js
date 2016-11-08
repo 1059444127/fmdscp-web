@@ -9,6 +9,7 @@ var flash = require('express-flash');
 var webpackDevMiddleware = require('webpack-dev-middleware');
 var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
+var config = require('./config');
 
 var app = express();
 
