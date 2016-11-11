@@ -7,11 +7,12 @@ import { createStore } from 'redux';
 import io from 'socket.io-client';
 import rootReducer from './statuslistreducer';
 
+
 const initialState = window.__INITIAL_STATE__;
 
 let store = createStore(rootReducer, initialState, window.devToolsExtension && window.devToolsExtension());
 
-const socket = io(`${location.protocol}//${location.hostname}:3000`);
+const socket = io(`${location.protocol}//${location.host}`);
 socket.on('updateoutsessionitem', data =>
   store.dispatch({type: 'UPDATE_OUTSESSIONITEM', item: data})
 );
