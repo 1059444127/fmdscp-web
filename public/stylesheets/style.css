@@ -22,3 +22,9 @@ body {
 .uuid {
   font-size: 50%;
 }
+
+@media print {
+  a[href]:after {
+    content:none;
+  }
+}
