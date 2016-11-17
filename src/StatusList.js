@@ -19,10 +19,12 @@ class StatusListItem extends Component {
       <tr>
         <td className='uuid'>{this.props.uuid}</td>
         <td>
-           <a href={'/studies/' + this.props.StudyInstanceUID}>{this.props.StudyInstanceUID}</a>
+           <a href={'/studies/' + this.props.StudyInstanceUID}>Study</a>
         </td>
         <td>{this.props.PatientID}</td>
         <td>{this.props.PatientName}</td>
+        <td>{this.props.StudyDate}</td>
+        <td>{this.props.ModalitiesInStudy}</td>
         <td>{this.props.destination_name}</td>
         <td><span style={nodisplay}>{this.props.updatedAt}</span><div>{fixdate(this.props.updatedAt)}</div></td>
         <td><span style={nodisplay}>{this.props.createdAt}</span><div>{fixdate(this.props.createdAt)}</div></td>
@@ -58,7 +60,9 @@ class StatusList extends Component {
             <th>uuid</th>
             <th>StudyInstanceUID</th>
             <th>PatientID</th>
-            <th>PatientName</th>
+            <th>Patient Name</th>
+            <th>Study Date</th>
+            <th>Modalities</th>
             <th>Destination</th>
             <th>last update</th>
             <th>started at</th>

@@ -25,8 +25,10 @@ const statuslistReducer = (state = {}, action) => {
         return [ {
           uuid: action.item.uuid,
           StudyInstanceUID: action.item.StudyInstanceUID,
-          PatientID: action.item.PatientID,
           PatientName: action.item.PatientName,
+          PatientID: action.item.PatientID,
+          StudyDate: action.item.StudyDate,
+          ModalitiesInStudy: action.item.ModalitiesInStudy,
           destination_name: action.item.destination_name,
           status: action.item.status,
           updatedAt: action.item.updatedAt,
