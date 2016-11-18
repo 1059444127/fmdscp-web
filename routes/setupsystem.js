@@ -97,6 +97,8 @@ function installdb() {
     StudyInstanceUID: {type: Sequelize.STRING},
     PatientName: {type: Sequelize.STRING},
     PatientID: {type: Sequelize.STRING},
+    StudyDate: {type: Sequelize.DATE},
+    ModalitiesInStudy: {type: Sequelize.STRING},
     destination_id: {type: Sequelize.INTEGER, references: {model: Destination, key: 'id'} },
     status: {type: Sequelize.STRING},
   });
