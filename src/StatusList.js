@@ -23,7 +23,7 @@ class StatusListItem extends Component {
         </td>
         <td>{this.props.PatientID}</td>
         <td>{this.props.PatientName}</td>
-        <td>{this.props.StudyDate}</td>
+        <td>{fixdate(this.props.StudyDate, 'l')}</td>
         <td>{this.props.ModalitiesInStudy}</td>
         <td>{this.props.destination_name}</td>
         <td><span style={nodisplay}>{this.props.updatedAt}</span><div>{fixdate(this.props.updatedAt)}</div></td>
@@ -35,9 +35,9 @@ class StatusListItem extends Component {
   }
 };
 
-function fixdate(date) {
+function fixdate(date, formatstring = 'lll') {
   var d = moment(date);
-  return d.format('lll');
+  return d.format(formatstring);
 }
 /*
 StatusListItem.propTypes = {
