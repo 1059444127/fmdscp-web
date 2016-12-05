@@ -1,0 +1,6 @@
+form
+add connection type
+| locally installed DICOM SCP
+  | Typically used to connect with on site modalities.
+| Site to site VPN based DICOM SCP
+  | Typically used to connect with another PACS system.
