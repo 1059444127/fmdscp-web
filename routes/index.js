@@ -11,30 +11,6 @@ router.get('/', function(req, response, next) {
   response.render('index', { title: 'Express' });
 });
 
-var env = {
-  AUTH0_CLIENT_ID: config.AUTH0_CLIENT_ID,
-  AUTH0_DOMAIN: config.AUTH0_DOMAIN,
-  AUTH0_CALLBACK_URL: config.AUTH0_CALLBACK_URL
-};
-
-// Render the login template
-router.get('/login', function(req, res) {
-    res.render('login', { env: env });
-});
-
-// Perform session logout and redirect to homepage
-router.get('/logout', function(req, res){
-  req.logout();
-  res.redirect('/');
-});
-
-// Perform the final stage of authentication and redirect to '/user'
-router.get('/callback',
-  passport.authenticate('auth0', { failureRedirect: '/url-if-something-fails' }),
-  function(req, res) {
-    res.redirect(req.session.returnTo || '/user');
-});
-
 router.post('/',function(req, response) {
   if(req.body.submit == 'Search') {
     search(req, response);
@@ -159,5 +135,25 @@ function getDate(dateAsString)
 
   return result;
 }
+
+// login stuff
+router.get('/login', function(req, response, next) {
+  response.render('login', { title: 'Login' });
+});
+
+router.post('/login',
+  passport.authenticate('local', {
+    successRedirect: '/loginSuccess',
+    failureRedirect: '/loginFailure'
+  })
+);
+
+router.get('/loginFailure', function(req, res, next) {
+  res.send('Failed to authenticate');
+});
+
+router.get('/loginSuccess', function(req, res, next) {
+  res.send('Successfully authenticated');
+});
 
 module.exports = router;

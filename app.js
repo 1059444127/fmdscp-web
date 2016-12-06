@@ -28,17 +28,27 @@ app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }, resave: tru
 app.use(flash());
 
 var passport = require('passport');
-var Auth0Strategy = require('passport-auth0');
-var strategy = new Auth0Strategy({
-    domain:       config.AUTH0_DOMAIN,
-    clientID:     config.AUTH0_CLIENT_ID,
-    clientSecret: config.AUTH0_CLIENT_SECRET,
-    callbackURL:  config.AUTH0_CALLBACK_URL
-  }, function(accessToken, refreshToken, extraParams, profile, done) {
-    // accessToken is the token to call Auth0 API (not needed in the most cases)
-    // extraParams.id_token has the JSON Web Token
-    // profile has all the information from the user
-    return done(null, profile);
+var localstrategy = require('passport-local');
+var strategy = new localstrategy(
+  function(username, password, done) {
+    AWS.config.update({
+      region: "us-west-2"
+    });
+
+    var params = {
+            TableName: "users",
+            Item: {
+                "email": username.toLowerCase();
+            }
+    };
+    var docClient = new AWS.DynamoDB.DocumentClient();
+    docClient.get(params, function(err, data) {
+      if (err) {
+          console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+      } else {
+          console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
+      }
+    });
   });
 
 passport.use(strategy);

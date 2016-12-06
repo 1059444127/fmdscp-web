@@ -1,4 +1,5 @@
 var Sequelize = require('sequelize');
+var AWS = require('aws-sdk');
 var express = require('express');
 var request = require('request');
 var config = require('../config');
@@ -10,7 +11,7 @@ router.get('/', function(req, response, next) {
 
 router.post('/',function(req, response) {
   if(req.body.submit == 'Install DB') {
-    installdb();
+    installdynamodb();
     req.flash('success', 'Created');
     response.render('setupsystem');
   } else if(req.body.submit == 'Stop Backend') {
@@ -27,6 +28,54 @@ router.post('/',function(req, response) {
       });
   }
 });
+
+function installdynamodb() {
+
+  AWS.config.update({
+    region: "us-west-2"
+  });
+
+  var dynamodb = new AWS.DynamoDB();
+
+  var params = {
+      TableName : "users",
+      KeySchema: [
+          { AttributeName: "email", KeyType: "HASH"}  //Partition key
+      ],
+      AttributeDefinitions: [
+          { AttributeName: "email", AttributeType: "S" }
+      ],
+      ProvisionedThroughput: {
+          ReadCapacityUnits: 5,
+          WriteCapacityUnits: 5
+      }
+  };
+
+  dynamodb.createTable(params, function(err, data) {
+      if (err) {
+          console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+      } else {
+          console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
+      }
+  });
+
+  var params = {
+          TableName: "users",
+          Item: {
+              "email": "draconpern@hotmail.com",
+              "password": "$P$BiX9NtYfdY9jPsNx9FQ9XqbN/L5QMp.",
+          }
+  };
+
+  var docClient = new AWS.DynamoDB.DocumentClient();
+  docClient.put(params, function(err, data) {
+         if (err) {
+             console.error("Unable to add. Error JSON:", JSON.stringify(err, null, 2));
+         } else {
+             console.log("PutItem ", JSON.stringify(data, null, 2));
+         }
+      });
+}
 
 function installdb() {
   var sequelize = new Sequelize(config.db_name, config.db_username, config.db_password, {
