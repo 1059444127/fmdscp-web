@@ -138,22 +138,14 @@ function getDate(dateAsString)
 
 // login stuff
 router.get('/login', function(req, response, next) {
-  response.render('login', { title: 'Login' });
+  response.render('users/login', { title: 'Login' });
 });
 
 router.post('/login',
-  passport.authenticate('local', {
-    successRedirect: '/loginSuccess',
-    failureRedirect: '/loginFailure'
+  passport.authenticate('local-login', {
+    successReturnToOrRedirect: '/',
+    failureRedirect: '/login'
   })
 );
-
-router.get('/loginFailure', function(req, res, next) {
-  res.send('Failed to authenticate');
-});
-
-router.get('/loginSuccess', function(req, res, next) {
-  res.send('Successfully authenticated');
-});
 
 module.exports = router;

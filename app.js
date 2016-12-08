@@ -28,37 +28,10 @@ app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }, resave: tru
 app.use(flash());
 
 var passport = require('passport');
-var localstrategy = require('passport-local');
-var strategy = new localstrategy(
-  function(username, password, done) {
-    AWS.config.update({
-      region: "us-west-2"
-    });
 
-    var params = {
-            TableName: "users",
-            Item: {
-                "email": username.toLowerCase();
-            }
-    };
-    var docClient = new AWS.DynamoDB.DocumentClient();
-    docClient.get(params, function(err, data) {
-      if (err) {
-          console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-      } else {
-          console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
-      }
-    });
-  });
+var passportconfig = require('./passportconfig');
 
-passport.use(strategy);
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
+passportconfig(passport);
 
 app.use(passport.initialize());
 app.use(passport.session());

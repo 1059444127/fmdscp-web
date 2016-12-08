@@ -44,6 +44,7 @@
     "socket.io": "^1.4.8",
     "socket.io-client": "^1.4.8",
     "webpack": "^1.13.2",
-    "webpack-dev-middleware": "^1.8.3"
+    "webpack-dev-middleware": "^1.8.3",
+    "wordpress-hash-node": "^1.0.0"
   }
 }

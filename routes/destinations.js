@@ -8,7 +8,7 @@ router.get('/', ensureLoggedIn, function(req, response, next) {
   request(config.backend + '/api/destinations', function(error, agentresponse, agentbody) { process_destinations_list(error, agentresponse, agentbody, req, response) });
 });
 
-router.get('/new', function(req, response, next) {
+router.get('/new', ensureLoggedIn, function(req, response, next) {
   response.render('destinations/new');
 });
 
@@ -20,7 +20,7 @@ router.post('/new', ensureLoggedIn, function(req, response) {
   }
 });
 
-router.get('/update/:id', function(req, response, next) {
+router.get('/update/:id', ensureLoggedIn, function(req, response, next) {
   request(config.backend + '/api/destinations/' + req.params.id, function(error, agentresponse, agentbody) { process_destinations_get(error, agentresponse, agentbody, req, response) });
 });
 
