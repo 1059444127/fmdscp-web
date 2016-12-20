@@ -1,6 +1,5 @@
 var express = require('express');
 var request = require('request');
-var config = require('../config');
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
@@ -9,7 +8,7 @@ router.get('/', function(req, res, next) {
 
 
 router.post('/cancel', function(req, res, next) {
-  request.post(config.backend + '/api/outsessions/cancel', { form: {uuid: req.body.uuid} },
+  request.post(process.env.BACKEND_URL + '/api/outsessions/cancel', { form: {uuid: req.body.uuid} },
     function(error, agentresponse, agentbody) {
       if (!error && agentresponse.statusCode == 200) {
         res.json({result: 'ok'});
@@ -22,7 +21,7 @@ router.post('/cancel', function(req, res, next) {
 
 
 function getstatuslist(req, response) {
-  request(config.backend + '/api/outsessions',
+  request(process.env.BACKEND_URL + '/api/outsessions',
     function(error, agentresponse, agentbody) {
       if (!error && agentresponse.statusCode == 200) {
         info = JSON.parse(agentbody);

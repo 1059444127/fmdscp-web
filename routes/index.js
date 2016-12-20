@@ -3,7 +3,6 @@ var request = require('request');
 var moment = require('moment');
 var async = require('async');
 var passport = require('passport');
-var config = require('../config');
 var router = express.Router();
 
 // home page
@@ -20,7 +19,7 @@ router.post('/',function(req, response) {
         destination: req.body.destination,
       }
 
-      request.post(config.backend + '/api/studies/send', {form: formData},
+      request.post(process.env.BACKEND_URL + '/api/studies/send', {form: formData},
         function(error, agentresponse, agentbody) {
           if (!error && agentresponse.statusCode == 200) {
             req.flash('success', 'Sent');
@@ -64,13 +63,13 @@ function search(req, response)
 
   async.parallel({
   destinations: function(callback) {
-    request(config.backend + '/api/destinations',
+    request(process.env.BACKEND_URL + '/api/destinations',
       function(error, agentresponse, agentbody) {
         process_destinations_list(error, agentresponse, agentbody, callback)
       });
   },
   studies: function(callback) {
-    request(config.backend + '/api/studies?' + querystring,
+    request(process.env.BACKEND_URL + '/api/studies?' + querystring,
       function(error, agentresponse, agentbody) {
         processresult(error, agentresponse, agentbody, callback)
       });

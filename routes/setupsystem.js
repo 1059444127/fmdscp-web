@@ -2,7 +2,6 @@ var Sequelize = require('sequelize');
 var AWS = require('aws-sdk');
 var express = require('express');
 var request = require('request');
-var config = require('../config');
 var router = express.Router();
 
 router.get('/', function(req, response, next) {
@@ -11,7 +10,7 @@ router.get('/', function(req, response, next) {
 
 router.post('/',function(req, response) {
   if(req.body.submit == 'Install DB') {
-    installdynamodb();
+    installdb();
     req.flash('success', 'Created');
     response.render('setupsystem');
   } else if(req.body.submit == 'Stop Backend') {
@@ -78,20 +77,7 @@ function installdynamodb() {
 }
 
 function installdb() {
-  var sequelize = new Sequelize(config.db_name, config.db_username, config.db_password, {
-    host: config.db_host,
-    dialect: 'mysql',
-    define: {
-    charset: 'utf8',
-    collate: 'utf8_general_ci'
-    },
-    pool: {
-      max: 5,
-      min: 0,
-      idle: 10000
-    },
-
-  });
+  var sequelize = new Sequelize(process.env.DATABASE_URL);
 
   sequelize
   .authenticate()

@@ -1,18 +1,16 @@
 var express = require('express');
 var request = require('request');
-var config = require('../config');
-var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var router = express.Router();
 
-router.get('/', ensureLoggedIn, function(req, response, next) {
-  request(config.backend + '/api/destinations', function(error, agentresponse, agentbody) { process_destinations_list(error, agentresponse, agentbody, req, response) });
+router.get('/', function(req, response, next) {
+  request(process.env.BACKEND_URL + '/api/destinations', function(error, agentresponse, agentbody) { process_destinations_list(error, agentresponse, agentbody, req, response) });
 });
 
-router.get('/new', ensureLoggedIn, function(req, response, next) {
+router.get('/new', function(req, response, next) {
   response.render('destinations/new');
 });
 
-router.post('/new', ensureLoggedIn, function(req, response) {
+router.post('/new', function(req, response) {
   if(req.body.submit == 'Add') {
      add(req, response);
   } else {
@@ -20,11 +18,11 @@ router.post('/new', ensureLoggedIn, function(req, response) {
   }
 });
 
-router.get('/update/:id', ensureLoggedIn, function(req, response, next) {
-  request(config.backend + '/api/destinations/' + req.params.id, function(error, agentresponse, agentbody) { process_destinations_get(error, agentresponse, agentbody, req, response) });
+router.get('/update/:id',  function(req, response, next) {
+  request(process.env.BACKEND_URL + '/api/destinations/' + req.params.id, function(error, agentresponse, agentbody) { process_destinations_get(error, agentresponse, agentbody, req, response) });
 });
 
-router.post('/update/:id', ensureLoggedIn, function(req, response) {
+router.post('/update/:id', function(req, response) {
   if(req.body.submit == 'Update') {
     update(req, response);
   } else if(req.body.submit == 'Delete') {
@@ -81,7 +79,7 @@ function add(req, response)
     sourceAE: sourceAE
   }
 
-  request.post(config.backend + '/api/destinations', {form: formData},
+  request.post(process.env.BACKEND_URL + '/api/destinations', {form: formData},
     function(error, agentresponse, agentbody) {
       if (!error && agentresponse.statusCode == 200) {
         req.flash('success', 'Added');
@@ -112,7 +110,7 @@ function update(req, response)
     sourceAE: sourceAE
   }
 
-  request.post(config.backend + '/api/destinations/' + req.params.id, {form: formData},
+  request.post(process.env.BACKEND_URL + '/api/destinations/' + req.params.id, {form: formData},
     function(error, agentresponse, agentbody) {
       if (!error && agentresponse.statusCode == 200) {
         req.flash('success', 'Updated');

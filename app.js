@@ -9,8 +9,6 @@ var flash = require('express-flash');
 var webpackDevMiddleware = require('webpack-dev-middleware');
 var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
-var config = require('./config');
-
 var app = express();
 
 // view engine setup
@@ -27,15 +25,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true}));
 app.use(flash());
 
-var passport = require('passport');
-
-var passportconfig = require('./passportconfig');
-
-passportconfig(passport);
-
-app.use(passport.initialize());
-app.use(passport.session());
-
 // routes
 var routes = require('./routes/index');
 app.use('/', routes);
@@ -51,9 +40,6 @@ app.use('/destinations', destinations);
 
 var setupsystem = require('./routes/setupsystem');
 app.use('/setupsystem', setupsystem);
-
-var user = require('./routes/user');
-app.use('/user', user);
 
 // webpack to compile react client files
 var compiler = webpack(webpackConfig);

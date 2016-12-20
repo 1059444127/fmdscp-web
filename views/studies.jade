@@ -73,5 +73,5 @@ block content
     if(study)
       each seriesitem in study.series ? study.series : []
         each item in seriesitem.SOPInstanceUIDs ? seriesitem.SOPInstanceUIDs : []
-          a(href=config.backend + '/studies?requestType=WADO&studyUID=' + study.StudyInstanceUID + '&seriesUID=' + seriesitem.SeriesInstanceUID + '&objectUID=' + item)
-            img.imageslice(width=200 src=config.backend + '/studies?requestType=WADO&width=200&studyUID=' + study.StudyInstanceUID + '&seriesUID=' + seriesitem.SeriesInstanceUID + '&objectUID=' + item)
+          a(href=process.env.BACKEND_URL + '/studies?requestType=WADO&studyUID=' + study.StudyInstanceUID + '&seriesUID=' + seriesitem.SeriesInstanceUID + '&objectUID=' + item)
+            img.imageslice(width=200 src=process.env.BACKEND_URL + '/studies?requestType=WADO&width=200&studyUID=' + study.StudyInstanceUID + '&seriesUID=' + seriesitem.SeriesInstanceUID + '&objectUID=' + item)

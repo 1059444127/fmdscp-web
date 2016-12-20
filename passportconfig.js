@@ -1,6 +1,7 @@
 // load all the things we need
 var LocalStrategy = require('passport-local').Strategy;
 var hasher = require('wordpress-hash-node');
+var models = require('./sequelize/models');
 var aws = require('aws-sdk')
 aws.config.update({region: "us-west-2"});
 aws.config.credentials = new aws.SharedIniFileCredentials({profile: 'default'});
@@ -17,17 +18,22 @@ module.exports = function(passport) {
 
   // used to serialize the user for the session
   passport.serializeUser(function(user, done) {
-    done(null, user.email.S);
+    return done(null, user.id);
   });
 
   // used to deserialize the user
-  passport.deserializeUser(function(email, done) {
-    dd.getItem({"TableName":tableName,"Key": {"email":{"S":email.toLowerCase().trim()}}}, function(err,data){
-      if (err){
-        done(err,data);
+  passport.deserializeUser(function(id, done) {
+    models['User'].findOne({ where: { id: id}})
+    .then(function(user) {
+      if(user) {
+        return done(null, user.get({plain: true}));
+      } else {
+        return done(null, false, req.flash('loginMessage', 'Unknown user'));
       }
-      done(err,data.Item)
     })
+    .catch(function(err) {
+      return done(err);
+    });
   });
 
   // =========================================================================
@@ -101,32 +107,22 @@ module.exports = function(passport) {
     passReqToCallback : true // allows us to pass back the entire request to the callback
   },
   function(req, email, password, done) { // callback with email and password from our form
-    var params = {
-      "TableName":tableName,
-      "KeyConditions":{
-        "email":{
-          "ComparisonOperator":"EQ",
-          "AttributeValueList":[{"S":email}]
-        }
-      }
-    }
-    dd.query(params, function(err,data){
-      if (err){
-        return done(err);
-      }
-      if (data.Items.length == 0){
-        return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
-      }
-      dd.getItem({"TableName":tableName,"Key": {"email":{"S":email.toLowerCase().trim()}}}, function(err,data){
-        if (err){
-          return done(err);
-        }
-        if (!hasher.CheckPassword(password, data.Item.password.S)){
+    models['User'].findOne({ where: { email: email}})
+    .then(function(user) {
+      if(user) {
+        if (!hasher.CheckPassword(password, user.get('password'))) {
           return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
         }else{
-          return done(null, data.Item);
+          return done(null, user.get({plain: true}));
         }
-      })
+      }
+      else {
+        return done(null, false, req.flash('loginMessage', 'Unknown user'));
+      }
+    })
+    .catch(function(err) {
+      return done(err);
     });
+
   }));
 };

@@ -12,20 +12,14 @@ block content
         tr
           th Name
           th City
-          th Studies
-          th Size
           th
       tbody
-        each item in results ? results : []
+        each item in sites ? sites : []
           tr
             td
               = item.name
             td
               = item.city
-            td
-              = item.studies
-            td
-              = item.storagesize
             td
               a.btn.btn-default(href='sites/update/' + item.id) Edit
       tfoot
