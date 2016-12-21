@@ -65,7 +65,7 @@ function getstudy(req, response) {
   function(err, results) {
     if(!err)
     {
-      response.render('studies', { study: results.study, destinations: results.destinations, config});
+      response.render('studies', { study: results.study, destinations: results.destinations, BACKEND_URL: process.env.BACKEND_URL});
     } else {
       req.flash('error', 'Query failed');
       response.render('studies', { });
