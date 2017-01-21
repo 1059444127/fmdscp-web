@@ -1,125 +1,169 @@
 var express = require('express');
 var request = require('request');
+var aws = require('aws-sdk')
+aws.config.update({region: "us-west-2"});
+aws.config.credentials = new aws.SharedIniFileCredentials({profile: 'default'});
+var docClient = new aws.DynamoDB.DocumentClient();
+var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
+var ensureSite = require('./ensureSite');
+
 var router = express.Router();
+router.use(ensureLoggedIn);
+router.use(ensureSite);
 
-router.get('/', function(req, response, next) {
-  request(process.env.BACKEND_URL + '/api/destinations', function(error, agentresponse, agentbody) { process_destinations_list(error, agentresponse, agentbody, req, response) });
+router.get('/', function(req, res, next) {
+  var params = {
+    "TableName": "destinations",
+    "KeyConditions":{
+      "site_id":{
+        "ComparisonOperator":"EQ",
+        "AttributeValueList": [ req.session.site_id ]
+      }
+    }
+  };
+
+  docClient.query(params, function(err, data) {
+    // if there are any errors, return the error
+    if (err) {
+      req.flash('error', err);
+      res.render('destinations/index');
+      return;
+    }
+
+    res.render('destinations/index', { results: data.Items});
+  });
 });
 
-router.get('/new', function(req, response, next) {
-  response.render('destinations/new');
+router.get('/new', function(req, res, next) {
+  res.render('destinations/new');
 });
 
-router.post('/new', function(req, response) {
+router.post('/new', function(req, res) {
   if(req.body.submit == 'Add') {
-     add(req, response);
+     add(req, res);
   } else {
-    response.render('destinations/index');
+    res.render('destinations/index');
   }
 });
 
-router.get('/update/:id',  function(req, response, next) {
-  request(process.env.BACKEND_URL + '/api/destinations/' + req.params.id, function(error, agentresponse, agentbody) { process_destinations_get(error, agentresponse, agentbody, req, response) });
+router.get('/update/:id',  function(req, res, next) {
+  var params = {
+    TableName: "destinations",
+    Key:{
+      site_id: req.session.site_id,
+      id: parseInt(req.params.id)
+    }
+  };
+
+  docClient.get(params, function(err, data) {
+    // if there are any errors, return the error
+    if (err) {
+      req.flash('error', err);
+      res.render('destinations/update');
+      return;
+    }
+    if (data.Item) {
+      res.render('destinations/update', data.Item);
+    } else {
+      req.flash('error', 'Unknown destination');
+      res.render('destinations/update');
+    }
+  });
 });
 
-router.post('/update/:id', function(req, response) {
+router.post('/update/:id', function(req, res) {
   if(req.body.submit == 'Update') {
-    update(req, response);
+    update(req, res);
   } else if(req.body.submit == 'Delete') {
-    // update(req, response);
-    response.redirect('/destinations');
+    deleteDestination(req, res);
   } else {
-    response.render('destinations/index');
+    res.render('destinations/index');
   }
 });
 
-function process_destinations_list(error, agentresponse, agentbody, req, response) {
-  if (!error && agentresponse.statusCode == 200) {
-    info = JSON.parse(agentbody);
-
-    response.render('destinations/index', { results: info.destinations});
-  } else {
-    req.flash('error', 'Failed');
-    response.render('destinations/index');
-  }
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function process_destinations_get(error, agentresponse, agentbody, req, response) {
-  if (!error && agentresponse.statusCode == 200) {
-    info = JSON.parse(agentbody);
-
-    var name = info.destination.name;
-    var destinationhost = info.destination.destinationhost;
-    var destinationport = info.destination.destinationport;
-    var destinationAE = info.destination.destinationAE;
-    var sourceAE = info.destination.sourceAE;
-
-    response.render('destinations/update', { name, destinationhost, destinationport, destinationAE, sourceAE});
-  } else {
-    req.flash('error', 'Failed');
-    response.render('destinations/update');
-  }
-}
-
-function add(req, response)
+function add(req, res)
 {
-  var name = req.body.name;
-  var destinationhost=req.body.destinationhost;
-  var destinationport = req.body.destinationport;
-  var destinationAE = req.body.destinationAE;
-  var sourceAE = req.body.sourceAE;
-
-  //if(name && destinationhost && destinationport && destinationAE && sourceAE)
-
-  var formData = {
-    name: name,
-    destinationhost: destinationhost,
-    destinationport: destinationport,
-    destinationAE: destinationAE,
-    sourceAE: sourceAE
-  }
-
-  request.post(process.env.BACKEND_URL + '/api/destinations', {form: formData},
-    function(error, agentresponse, agentbody) {
-      if (!error && agentresponse.statusCode == 200) {
-        req.flash('success', 'Added');
-        response.redirect('/destinations');
+    var params = {
+      TableName:"destinations",
+      Item : {
+        site_id: req.session.site_id,
+        id: getRandomInt(1, 1000),
+        name: req.body.name,
+        destinationhost: req.body.destinationhost,
+        destinationport: parseInt(req.body.destinationport),
+        destinationAE: req.body.destinationAE,
+        sourceAE: req.body.sourceAE
+      }
+    }
+    docClient.put(params, function(err, data) {
+      if (err) {
+        req.flash('error', err);
+        res.render('destinations/new', params.Item);
       } else {
-        req.flash('error', 'Query Failed');
-        response.render('destinations/new', { name, destinationhost, destinationport, destinationAE, sourceAE});
+        res.redirect('/destinations');
+        req.socketio.sendoutDestination();
       }
     });
 }
 
 
-function update(req, response)
+function update(req, res)
 {
-  var name = req.body.name;
-  var destinationhost=req.body.destinationhost;
-  var destinationport = req.body.destinationport;
-  var destinationAE = req.body.destinationAE;
-  var sourceAE = req.body.sourceAE;
-
-  //if(name && destinationhost && destinationport && destinationAE && sourceAE)
-
-  var formData = {
-    name: name,
-    destinationhost: destinationhost,
-    destinationport: destinationport,
-    destinationAE: destinationAE,
-    sourceAE: sourceAE
+  var params = {
+    TableName:"destinations",
+    Key : {
+      site_id: req.session.site_id,
+      id: parseInt(req.params.id)
+    },
+    UpdateExpression: "SET #aname = :name, destinationhost = :destinationhost, destinationport = :destinationport, destinationAE = :destinationAE, sourceAE = :sourceAE",
+    ExpressionAttributeNames : {
+      '#aname': "name"
+    },
+    ExpressionAttributeValues : {
+      ':name': req.body.name,
+      ':destinationhost': req.body.destinationhost,
+      ':destinationport': parseInt(req.body.destinationport),
+      ':destinationAE': req.body.destinationAE,
+      ':sourceAE': req.body.sourceAE
+    }
   }
-
-  request.post(process.env.BACKEND_URL + '/api/destinations/' + req.params.id, {form: formData},
-    function(error, agentresponse, agentbody) {
-      if (!error && agentresponse.statusCode == 200) {
-        req.flash('success', 'Updated');
-        response.redirect('/destinations');
-      } else {
-        req.flash('error', 'Failed');
-        response.render('destinations/update', { name, destinationhost, destinationport, destinationAE, sourceAE});
-      }
-    });
+  docClient.update(params, function(err, data) {
+    if (err) {
+      req.flash('error', err);
+      res.render('destinations/update', params.Item);
+    } else {
+      res.redirect('/destinations');
+      req.socketio.sendoutDestination();
+    }
+  });
 }
+
+function deleteDestination(req, res)
+{
+  var params = {
+    TableName: "destinations",
+    Key:{
+      site_id: req.session.site_id,
+      id: parseInt(req.params.id)
+    }
+  };
+
+  docClient.delete(params, function(err, data) {
+    // if there are any errors, return the error
+    if (err) {
+      req.flash('error', err);
+      res.render('destinations/update', params.Item);
+      return;
+    }
+
+    res.redirect('/destinations');
+    req.socketio.sendoutDestination();
+  });
+}
+
 
 module.exports = router;

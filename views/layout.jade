@@ -37,9 +37,26 @@ html(lang="en")
               ul.dropdown-menu
                 li
                   a(href='/destinations') Destinations
+                li
+                  a(href='/sites') Sites
+                li
+                  a(href='/user/switchsite') Switch Site
+                li
+                  a(href='/user/profile') Profile
+                li
+                  a(href='/user/logout') Logout
           ul.nav.navbar-nav.navbar-right
-            li
-              a(href='http://www.frontmotion.com') About
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+                | Stuff
+                span.caret
+              ul.dropdown-menu
+                li
+                  a(href='http://www.frontmotion.com') About
+                li
+                  a(href='/signup') signup
+                li
+                  a(href='/login') Login
       block content
 
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js")

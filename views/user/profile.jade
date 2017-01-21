@@ -1,0 +1,18 @@
+extends ../layout
+block title
+  |  User
+block content
+  div.col-md-12
+    h3 User
+    if(messages.success)
+      p.bg-success
+        = messages.success
+    p
+      = user.email
+    p
+      = user.name
+    p
+      = site_id
+    if(messages.error)
+      p.bg-danger
+        = messages.error

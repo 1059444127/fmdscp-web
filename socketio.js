@@ -1,5 +1,9 @@
 var Server = require('socket.io');
 var request = require('request');
+var aws = require('aws-sdk')
+aws.config.update({region: "us-west-2"});
+aws.config.credentials = new aws.SharedIniFileCredentials({profile: 'default'});
+var docClient = new aws.DynamoDB.DocumentClient();
 var io = new Server();
 
 io.on('connection', (socket) => {
@@ -25,6 +29,9 @@ io.on('connection', (socket) => {
       socket.to('frontends').emit('updateoutsessionitem', data);
     });
 
+    getDestinations(function(err, data) {
+      socket.emit('setDestinations', data);
+    });
   });
 
 // they are a frontend
@@ -45,5 +52,33 @@ io.on('connection', (socket) => {
   });
 
 });
+
+function getDestinations(callback) {
+  var params = {
+    "TableName": "destinations",
+    "KeyConditions":{
+      "site_id":{
+        "ComparisonOperator":"EQ",
+        "AttributeValueList":["wowowow"]
+      }
+    }
+  };
+
+  docClient.query(params, function(err, data) {
+    // if there are any errors, return the error
+    if (err) {
+      callback(err);
+    }
+
+    callback(null, data.Items);    
+  });
+};
+
+io.sendoutDestination = function() {
+  getDestinations(function(err, data){
+    io.to('backend-xyz').emit('setDestinations', data );
+  });
+}
+
 
 module.exports = io;
