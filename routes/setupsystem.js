@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
+var AWS = require('aws-sdk');
 var express = require('express');
 var request = require('request');
-var config = require('../config');
 var router = express.Router();
 
 router.get('/', function(req, response, next) {
@@ -28,21 +28,56 @@ router.post('/',function(req, response) {
   }
 });
 
-function installdb() {
-  var sequelize = new Sequelize(config.db_name, config.db_username, config.db_password, {
-    host: config.db_host,
-    dialect: 'mysql',
-    define: {
-    charset: 'utf8',
-    collate: 'utf8_general_ci'
-    },
-    pool: {
-      max: 5,
-      min: 0,
-      idle: 10000
-    },
+function installdynamodb() {
 
+  AWS.config.update({
+    region: "us-west-2"
   });
+
+  var dynamodb = new AWS.DynamoDB();
+
+  var params = {
+      TableName : "users",
+      KeySchema: [
+          { AttributeName: "email", KeyType: "HASH"}  //Partition key
+      ],
+      AttributeDefinitions: [
+          { AttributeName: "email", AttributeType: "S" }
+      ],
+      ProvisionedThroughput: {
+          ReadCapacityUnits: 5,
+          WriteCapacityUnits: 5
+      }
+  };
+
+  dynamodb.createTable(params, function(err, data) {
+      if (err) {
+          console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+      } else {
+          console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
+      }
+  });
+
+  var params = {
+          TableName: "users",
+          Item: {
+              "email": "draconpern@hotmail.com",
+              "password": "$P$BiX9NtYfdY9jPsNx9FQ9XqbN/L5QMp.",
+          }
+  };
+
+  var docClient = new AWS.DynamoDB.DocumentClient();
+  docClient.put(params, function(err, data) {
+         if (err) {
+             console.error("Unable to add. Error JSON:", JSON.stringify(err, null, 2));
+         } else {
+             console.log("PutItem ", JSON.stringify(data, null, 2));
+         }
+      });
+}
+
+function installdb() {
+  var sequelize = new Sequelize(process.env.DATABASE_URL);
 
   sequelize
   .authenticate()

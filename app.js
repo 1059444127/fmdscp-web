@@ -5,17 +5,26 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var mysql = require('mysql');
+var MySQLStore = require('express-mysql-session')(session);
 var flash = require('express-flash');
 var webpackDevMiddleware = require('webpack-dev-middleware');
 var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
-var config = require('./config');
-
+var passport = require('passport');
+var passportconfig = require('./passportawsconfig');
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+var connection = mysql.createConnection(process.env.DATABASE_URL);
+var options = {
+
+};
+
+var sessionStore = new MySQLStore(options, connection);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -24,34 +33,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true}));
+app.use(session({ secret: 'keyboard cat', store: sessionStore, cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true}));
 app.use(flash());
 
-var passport = require('passport');
-var Auth0Strategy = require('passport-auth0');
-var strategy = new Auth0Strategy({
-    domain:       config.AUTH0_DOMAIN,
-    clientID:     config.AUTH0_CLIENT_ID,
-    clientSecret: config.AUTH0_CLIENT_SECRET,
-    callbackURL:  config.AUTH0_CALLBACK_URL
-  }, function(accessToken, refreshToken, extraParams, profile, done) {
-    // accessToken is the token to call Auth0 API (not needed in the most cases)
-    // extraParams.id_token has the JSON Web Token
-    // profile has all the information from the user
-    return done(null, profile);
-  });
-
-passport.use(strategy);
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
-
+passportconfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
+
+// pass the socketio server to the request
+app.use(function(req, res, next) {
+  req.socketio = app.socketio;
+  next();
+  });
 
 // routes
 var routes = require('./routes/index');
@@ -71,6 +64,13 @@ app.use('/setupsystem', setupsystem);
 
 var user = require('./routes/user');
 app.use('/user', user);
+
+var sites = require('./routes/sites');
+app.use('/sites', sites);
+
+var api = require('./routes/api');
+app.use('/api', api);
+
 
 // webpack to compile react client files
 var compiler = webpack(webpackConfig);

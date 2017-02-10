@@ -1,0 +1,26 @@
+extends ../layout
+block title
+  |  Login
+block content
+  h3 Login
+  if(messages.error)
+    p.bg-danger
+      = messages.error
+  form.form-horizontal(name="login", method="post")
+    div.form-group
+      label.col-sm-3.control-label email
+      div.col-sm-9
+        input.form-control(type="text", name="email" value=email)
+    div.form-group
+      label.col-sm-3.control-label Password
+      div.col-sm-9
+        input.form-control(type="password", name="password" value=password)
+    div.form-group
+      div.col-sm-9.col-sm-offset-3
+        input.btn.btn-primary(name="submit", type="submit", value="login")
+        | &nbsp;
+        a.btn.btn-default(href='/') Cancel
+
+    div.form-group
+      div.col-sm-9.col-sm-offset-3
+        a.btn.btn-default(href='/auth/facebook') Facebook Login

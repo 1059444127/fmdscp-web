@@ -2,7 +2,6 @@ var express = require('express');
 var request = require('request');
 var moment = require('moment');
 var async = require('async');
-var config = require('../config');
 var router = express.Router();
 
 router.get('/:studyinstanceuid', function(req, response, next) {
@@ -15,7 +14,7 @@ router.post('/:studyinstanceuid/send',function(req, response) {
       destination: req.body.destination,
     }
 
-    request.post(config.backend + '/api/studies/' + req.params.studyinstanceuid + '/send', {form: formData},
+    request.post(process.env.BACKEND_URL + '/api/studies/' + req.params.studyinstanceuid + '/send', {form: formData},
       function(error, agentresponse, agentbody) {
         if (!error && agentresponse.statusCode == 200) {
           response.redirect('/statuslist');
@@ -33,13 +32,13 @@ router.post('/:studyinstanceuid/send',function(req, response) {
 function getstudy(req, response) {
   async.parallel({
   destinations: function(callback) {
-    request(config.backend + '/api/destinations',
+    request(process.env.BACKEND_URL + '/api/destinations',
       function(error, agentresponse, agentbody) {
         process_destinations_list(error, agentresponse, agentbody, callback)
       });
   },
   study: function(callback) {
-    request.get(config.backend + '/api/studies/' + req.params.studyinstanceuid,
+    request.get(process.env.BACKEND_URL + '/api/studies/' + req.params.studyinstanceuid,
       function(error, agentresponse, agentbody) {
         if (!error && agentresponse.statusCode == 200) {
           info = JSON.parse(agentbody);
@@ -66,7 +65,7 @@ function getstudy(req, response) {
   function(err, results) {
     if(!err)
     {
-      response.render('studies', { study: results.study, destinations: results.destinations, config});
+      response.render('studies', { study: results.study, destinations: results.destinations, BACKEND_URL: process.env.BACKEND_URL});
     } else {
       req.flash('error', 'Query failed');
       response.render('studies', { });

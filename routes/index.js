@@ -3,36 +3,11 @@ var request = require('request');
 var moment = require('moment');
 var async = require('async');
 var passport = require('passport');
-var config = require('../config');
 var router = express.Router();
 
 // home page
 router.get('/', function(req, response, next) {
   response.render('index', { title: 'Express' });
-});
-
-var env = {
-  AUTH0_CLIENT_ID: config.AUTH0_CLIENT_ID,
-  AUTH0_DOMAIN: config.AUTH0_DOMAIN,
-  AUTH0_CALLBACK_URL: config.AUTH0_CALLBACK_URL
-};
-
-// Render the login template
-router.get('/login', function(req, res) {
-    res.render('login', { env: env });
-});
-
-// Perform session logout and redirect to homepage
-router.get('/logout', function(req, res){
-  req.logout();
-  res.redirect('/');
-});
-
-// Perform the final stage of authentication and redirect to '/user'
-router.get('/callback',
-  passport.authenticate('auth0', { failureRedirect: '/url-if-something-fails' }),
-  function(req, res) {
-    res.redirect(req.session.returnTo || '/user');
 });
 
 router.post('/',function(req, response) {
@@ -44,7 +19,7 @@ router.post('/',function(req, response) {
         destination: req.body.destination,
       }
 
-      request.post(config.backend + '/api/studies/send', {form: formData},
+      request.post(process.env.BACKEND_URL + '/api/studies/send', {form: formData},
         function(error, agentresponse, agentbody) {
           if (!error && agentresponse.statusCode == 200) {
             req.flash('success', 'Sent');
@@ -88,13 +63,13 @@ function search(req, response)
 
   async.parallel({
   destinations: function(callback) {
-    request(config.backend + '/api/destinations',
+    request(process.env.BACKEND_URL + '/api/destinations',
       function(error, agentresponse, agentbody) {
         process_destinations_list(error, agentresponse, agentbody, callback)
       });
   },
   studies: function(callback) {
-    request(config.backend + '/api/studies?' + querystring,
+    request(process.env.BACKEND_URL + '/api/studies?' + querystring,
       function(error, agentresponse, agentbody) {
         processresult(error, agentresponse, agentbody, callback)
       });
@@ -159,5 +134,41 @@ function getDate(dateAsString)
 
   return result;
 }
+
+// login stuff
+router.get('/login', function(req, response, next) {
+  response.render('user/login');
+});
+
+router.post('/login',
+  passport.authenticate('local-login', {
+    successReturnToOrRedirect: '/',
+    failureRedirect: '/login',
+    failureFlash : true
+  })
+);
+
+router.get('/signup', function(req, res, next) {
+  res.render('user/signup');
+});
+
+// process the signup form
+router.post('/signup', passport.authenticate('local-signup', {
+  successRedirect : '/user/profile', // redirect to the secure profile section
+  failureRedirect : '/user/signup', // redirect back to the signup page if there is an error
+  failureFlash : true // allow flash messages
+}));
+
+
+router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
+
+router.get('/auth/facebook/callback',
+  passport.authenticate('facebook', {
+      successReturnToOrRedirect: '/',
+      failureRedirect : '/login',
+      failureFlash : true
+  })
+);
+
 
 module.exports = router;
