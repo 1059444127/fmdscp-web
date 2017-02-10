@@ -2,7 +2,28 @@ var express = require('express');
 var request = require('request');
 var router = express.Router();
 
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
+  var params = {
+    "TableName": "outsessions",
+    "KeyConditions":{
+      "site_id":{
+        "ComparisonOperator":"EQ",
+        "AttributeValueList": [ req.session.site_id ]
+      }
+    }
+  };
+
+  docClient.query(params, function(err, data) {
+    // if there are any errors, return the error
+    if (err) {
+      req.flash('error', err);
+      res.render('destinations/index');
+      return;
+    }
+
+    res.render('destinations/index', { results: data.Items});
+  });
+
   getstatuslist(req, res);
 });
 

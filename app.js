@@ -68,6 +68,8 @@ app.use('/user', user);
 var sites = require('./routes/sites');
 app.use('/sites', sites);
 
+var api = require('./routes/api');
+app.use('/api', api);
 
 
 // webpack to compile react client files
