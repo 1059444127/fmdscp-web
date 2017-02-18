@@ -137,38 +137,14 @@ function getDate(dateAsString)
 
 // login stuff
 router.get('/login', function(req, response, next) {
-  response.render('user/login');
+  response.render('users/login', { title: 'Login' });
 });
 
 router.post('/login',
   passport.authenticate('local-login', {
     successReturnToOrRedirect: '/',
-    failureRedirect: '/login',
-    failureFlash : true
+    failureRedirect: '/login'
   })
 );
-
-router.get('/signup', function(req, res, next) {
-  res.render('user/signup');
-});
-
-// process the signup form
-router.post('/signup', passport.authenticate('local-signup', {
-  successRedirect : '/user/profile', // redirect to the secure profile section
-  failureRedirect : '/user/signup', // redirect back to the signup page if there is an error
-  failureFlash : true // allow flash messages
-}));
-
-
-router.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
-
-router.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {
-      successReturnToOrRedirect: '/',
-      failureRedirect : '/login',
-      failureFlash : true
-  })
-);
-
 
 module.exports = router;

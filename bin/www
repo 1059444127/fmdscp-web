@@ -13,7 +13,6 @@ var io = require('../socketio');
 var debug = require('debug')('fmdscp-web:server');
 var http = require('http');
 
-app.socketio = io;
 /**
  * Get port from environment and store in Express.
  */

@@ -1,7 +1,7 @@
 # fmdscp-web
 Frontend to fmdscp
 
-This project is for learning about javascript.  It is a re-implementation of an internal asp.net applicationusing all the same design and data structures.  Both are being used is in production to gather some data about javascript.  Code clean up and refactoring will come later.
+Simple DICOM SCP
 
 ## Requirements
 - MySQL server
